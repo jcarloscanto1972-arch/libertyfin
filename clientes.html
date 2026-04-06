@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Clientes — Libertyfin</title>
+<style>/* ═══════════════════════════════════════════
+   LIBERTYFIN — MAIN CSS
+   ═══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --green:       #22c55e;
+  --green-d:     #16a34a;
+  --green-dd:    #15803d;
+  --green-light: #f0fdf4;
+  --green-mid:   #dcfce7;
+  --ink:         #111827;
+  --ink2:        #374151;
+  --ink3:        #6b7280;
+  --ink4:        #9ca3af;
+  --bg:          #f9fafb;
+  --surface:     #ffffff;
+  --border:      #e5e7eb;
+  --border2:     #d1d5db;
+  --r:           12px;
+  --r-lg:        16px;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:      0 4px 16px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:   0 20px 60px rgba(0,0,0,0.1),0 8px 20px rgba(0,0,0,0.06);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body { font-family:'Poppins',sans-serif; background:var(--surface); color:var(--ink); overflow-x:hidden; line-height:1.6 }
+
+/* ── NAVBAR ─────────────────────────────────── */
+.lf-nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:64px; display:flex; align-items:center;
+  padding:0 48px; gap:0;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  transition:box-shadow 0.3s;
+}
+.lf-nav.scrolled { box-shadow:0 2px 16px rgba(0,0,0,0.07) }
+
+.nav-logo { display:flex; align-items:center; gap:9px; text-decoration:none; flex-shrink:0; margin-right:32px }
+.nav-logo-icon { width:34px; height:34px; display:flex; align-items:center; justify-content:center }
+.nav-logo-icon svg { width:30px; height:30px }
+.nav-logotype { font-family:'Nunito',sans-serif; font-size:18px; font-weight:800; color:var(--ink); letter-spacing:-0.3px }
+.nav-logotype span { color:var(--green) }
+
+/* Mega-menu nav */
+.nav-menu { display:flex; align-items:stretch; list-style:none; height:64px; margin:0 auto }
+.nav-menu > li { position:relative; display:flex; align-items:center }
+.nav-menu > li > a {
+  display:flex; align-items:center; gap:5px;
+  padding:0 16px; height:64px;
+  font-size:13.5px; font-weight:500; color:var(--ink2);
+  text-decoration:none; white-space:nowrap;
+  transition:color 0.15s; border-bottom:2px solid transparent;
+  cursor:pointer;
+}
+.nav-menu > li > a:hover,
+.nav-menu > li.open > a { color:var(--green); border-bottom-color:var(--green) }
+.nav-menu > li > a svg { width:13px; height:13px; transition:transform 0.2s }
+.nav-menu > li.open > a svg { transform:rotate(180deg) }
+
+/* Dropdown panel */
+.nav-dropdown {
+  position:absolute; top:64px; left:50%; transform:translateX(-50%);
+  background:white; border:1px solid var(--border);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-lg);
+  padding:20px; min-width:560px;
+  opacity:0; pointer-events:none; visibility:hidden;
+  transform:translateX(-50%) translateY(-8px);
+  transition:all 0.2s cubic-bezier(.34,1.56,.64,1);
+  z-index:300;
+}
+.nav-menu > li.open .nav-dropdown {
+  opacity:1; pointer-events:all; visibility:visible;
+  transform:translateX(-50%) translateY(0);
+}
+.nav-dropdown.narrow { min-width:220px }
+.nav-dropdown-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:4px }
+.nav-dropdown-grid.col2 { grid-template-columns:repeat(2,1fr) }
+.nav-dropdown-grid.col1 { grid-template-columns:1fr }
+.nav-dd-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:9px;
+  text-decoration:none; transition:background 0.15s;
+  color:var(--ink2);
+}
+.nav-dd-item:hover { background:var(--green-light) }
+.nav-dd-icon {
+  width:34px; height:34px; border-radius:8px;
+  background:var(--green-light); color:var(--green-d);
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.nav-dd-text {}
+.nav-dd-title { font-size:13px; font-weight:700; color:var(--ink); line-height:1.2 }
+.nav-dd-desc { font-size:11.5px; color:var(--ink3); line-height:1.3; margin-top:1px }
+
+.nav-dd-section-title {
+  font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;
+  color:var(--ink4); padding:4px 12px 8px; grid-column:1/-1;
+}
+
+/* Nav CTA buttons */
+.nav-ctas { display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:16px }
+.btn-nav-login {
+  padding:7px 16px; border-radius:8px; border:1.5px solid var(--border2);
+  background:transparent; font-family:'Poppins',sans-serif; font-size:13.5px; font-weight:600;
+  color:var(--ink2); cursor:pointer; transition:all 0.15s; text-decoration:none;
+  display:inline-flex; align-items:center;
+}
+.btn-nav-login:hover { border-color:var(--green); color:var(--green) }
+.btn-nav-register {
+  padding:7px 18px; border-radius:8px; border:none; background:var(--green);
+  font-family:'Poppins',sans-serif; font-size:13.5px; font-weight:700;
+  color:white; cursor:pointer; transition:all 0.2s; text-decoration:none;
+  display:inline-flex; align-items:center; gap:6px;
+  box-shadow:0 2px 8px rgba(34,197,94,0.3);
+}
+.btn-nav-register:hover { background:var(--green-d); transform:translateY(-1px); box-shadow:0 4px 16px rgba(34,197,94,0.35) }
+
+/* ── SHARED BUTTONS ─────────────────────────── */
+.btn { display:inline-flex; align-items:center; gap:7px; font-family:'Poppins',sans-serif; font-weight:600; cursor:pointer; transition:all 0.2s; text-decoration:none; border:none }
+.btn-green { padding:12px 26px; border-radius:10px; background:var(--green); color:white; font-size:15px; font-weight:700; box-shadow:0 4px 16px rgba(34,197,94,0.3) }
+.btn-green:hover { background:var(--green-d); transform:translateY(-2px); box-shadow:0 8px 28px rgba(34,197,94,0.4) }
+.btn-ghost { padding:12px 26px; border-radius:10px; background:transparent; color:var(--ink2); font-size:15px; border:1.5px solid var(--border2) }
+.btn-ghost:hover { border-color:var(--green); color:var(--green) }
+.btn-sm { padding:8px 18px; font-size:13.5px; border-radius:8px }
+
+/* ── SECTION SHARED ─────────────────────────── */
+.lf-section { padding:88px 24px }
+.lf-section-inner { max-width:1100px; margin:0 auto }
+.lf-section.bg-gray { background:var(--bg) }
+.lf-section.bg-dark { background:var(--ink) }
+.lf-section.bg-green { background:var(--green) }
+
+.s-eyebrow { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--green-d); margin-bottom:14px; display:block }
+.s-title { font-family:'Nunito',sans-serif; font-size:clamp(28px,4vw,48px); font-weight:900; letter-spacing:-1.5px; line-height:1.1; color:var(--ink); margin-bottom:16px }
+.s-title em { font-style:normal; color:var(--green) }
+.s-title.white { color:white }
+.s-sub { font-size:17px; color:var(--ink3); max-width:520px; line-height:1.65 }
+.s-sub.white { color:rgba(255,255,255,0.6) }
+.text-center { text-align:center }
+.mx-auto { margin-left:auto; margin-right:auto }
+
+/* ── SCROLL REVEAL ──────────────────────────── */
+.reveal { opacity:0; transform:translateY(22px); transition:opacity 0.6s ease,transform 0.6s ease }
+.reveal.visible { opacity:1; transform:translateY(0) }
+.reveal-d1 { transition-delay:0.1s }
+.reveal-d2 { transition-delay:0.18s }
+.reveal-d3 { transition-delay:0.26s }
+.reveal-d4 { transition-delay:0.34s }
+
+/* ── FOOTER ─────────────────────────────────── */
+.lf-footer { background:var(--ink); border-top:1px solid rgba(255,255,255,0.06); padding:60px 48px 28px }
+.lf-footer-inner { max-width:1100px; margin:0 auto }
+.lf-footer-top { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr 1fr; gap:36px; margin-bottom:48px }
+.footer-logo { display:flex; align-items:center; gap:8px; margin-bottom:14px }
+.footer-lm { width:28px; height:28px; background:var(--green); border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+.footer-lt { font-family:'Nunito',sans-serif; font-size:16px; font-weight:800; color:white }
+.footer-lt span { color:var(--green) }
+.footer-desc { font-size:13px; line-height:1.65; color:rgba(255,255,255,0.35); max-width:200px; margin-bottom:16px }
+.social-links { display:flex; gap:8px; margin-top:4px }
+.social-btn { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.2s }
+.social-btn:hover { background:var(--green); border-color:var(--green); transform:translateY(-2px) }
+.social-btn svg { width:14px; height:14px; fill:rgba(255,255,255,0.5); transition:fill 0.2s }
+.social-btn:hover svg { fill:white }
+.footer-col-title { font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px }
+.footer-links { list-style:none; display:flex; flex-direction:column; gap:9px }
+.footer-links a { color:rgba(255,255,255,0.35); text-decoration:none; font-size:13px; transition:color 0.15s }
+.footer-links a:hover { color:rgba(255,255,255,0.8) }
+.lf-footer-bottom { padding-top:22px; border-top:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px }
+.footer-copy { font-size:12px; color:rgba(255,255,255,0.25) }
+.footer-legal { display:flex; gap:18px }
+.footer-legal a { color:rgba(255,255,255,0.25); text-decoration:none; font-size:12px }
+.footer-legal a:hover { color:rgba(255,255,255,0.55) }
+
+/* ── WHATSAPP FLOAT ─────────────────────────── */
+.wa-float { position:fixed; bottom:28px; right:28px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:10px }
+.wa-bubble { background:white; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-lg); padding:12px 14px; max-width:220px; font-size:12.5px; color:var(--ink2); line-height:1.5; opacity:0; transform:translateY(8px) scale(0.95); transition:all 0.25s ease; pointer-events:none; position:relative }
+.wa-bubble strong { display:block; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:2px }
+.wa-bubble.show { opacity:1; transform:translateY(0) scale(1); pointer-events:all }
+.wa-bubble::after { content:''; position:absolute; bottom:-6px; right:18px; width:12px; height:12px; background:white; border-right:1px solid var(--border); border-bottom:1px solid var(--border); transform:rotate(45deg) }
+.wa-circle { width:56px; height:56px; border-radius:50%; background:#25d366; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 20px rgba(37,211,102,0.45); transition:all 0.2s; position:relative }
+.wa-circle:hover { background:#1ebe5d; transform:scale(1.08) }
+.wa-circle svg { width:28px; height:28px; fill:white }
+.wa-ping { position:absolute; top:2px; right:2px; width:12px; height:12px; border-radius:50%; background:#ef4444; border:2px solid white; animation:waping 2s ease-in-out infinite }
+@keyframes waping { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media(max-width:1024px) { .lf-nav { padding:0 24px } .nav-menu { display:none } }
+@media(max-width:768px) { .lf-footer-top { grid-template-columns:1fr 1fr } }
+</style>
+<style>
+body{padding-top:64px}
+.feat-hero{padding:80px 24px 64px;background:linear-gradient(135deg,#f5f3ff 0%,white 60%);border-bottom:1px solid var(--border)}
+.feat-hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.feat-hero-tag{display:inline-block;background:#7c3aed;color:white;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;margin-bottom:16px}
+.feat-hero-title{font-family:'Nunito',sans-serif;font-size:clamp(32px,4.5vw,52px);font-weight:900;letter-spacing:-2px;line-height:1.05;color:var(--ink);margin-bottom:18px}
+.feat-hero-title em{font-style:normal;color:var(--green)}
+.feat-hero-desc{font-size:16px;color:var(--ink3);line-height:1.7;margin-bottom:28px}
+.feat-hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* CRM card mock */
+.crm-mock{background:white;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.1)}
+.crm-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.crm-title{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--ink)}
+.crm-count{background:var(--green);color:white;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.crm-client{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #f9fafb;transition:background 0.15s}
+.crm-client:last-child{border:none}
+.crm-client:hover{background:var(--bg)}
+.crm-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.crm-info{flex:1}
+.crm-name{font-size:12px;font-weight:700;color:var(--ink)}
+.crm-detail{font-size:10px;color:var(--ink3)}
+.crm-total{text-align:right}
+.crm-total-val{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--ink)}
+.crm-total-label{font-size:10px;color:var(--ink3)}
+.crm-tag{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700}
+.tag-vip{background:#fef9c3;color:#92400e}
+.tag-new{background:#dcfce7;color:#166534}
+.tag-reg{background:#eff6ff;color:#1d4ed8}
+
+.feat-section{padding:80px 24px;background:white}
+.feat-section.gray{background:var(--bg)}
+.feat-inner{max-width:1100px;margin:0 auto}
+.feat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.feat-card{background:white;border:1px solid var(--border);border-radius:16px;padding:24px;transition:all 0.25s}
+.feat-card.gray-bg{background:var(--bg)}
+.feat-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 32px rgba(34,197,94,0.1)}
+.feat-card-icon{font-size:28px;margin-bottom:12px}
+.feat-card-title{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.feat-card-desc{font-size:13.5px;color:var(--ink3);line-height:1.65}
+
+.feat-2col{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:52px}
+.feat-list{display:flex;flex-direction:column;gap:16px}
+.feat-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;transition:all 0.2s}
+.feat-item:hover{border-color:var(--green);background:var(--green-light);transform:translateX(4px)}
+.feat-item-icon{width:38px;height:38px;border-radius:9px;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feat-item-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.feat-item-desc{font-size:13px;color:var(--ink3);line-height:1.55}
+.aside-dark{background:var(--ink);border-radius:20px;padding:28px}
+.aside-dark-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:white;margin-bottom:8px}
+.aside-dark-desc{font-size:13.5px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.6}
+.aside-stat-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+.aside-stat-row:last-child{border:none}
+.aside-stat-label{font-size:12px;color:rgba(255,255,255,0.45)}
+.aside-stat-val{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--green)}
+
+.other-modules{padding:72px 24px;background:var(--bg);text-align:center}
+.other-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:36px;max-width:900px;margin-left:auto;margin-right:auto}
+.other-card{background:white;border:1px solid var(--border);border-radius:14px;padding:18px 12px;text-decoration:none;color:inherit;transition:all 0.2s;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
+.other-card:hover{border-color:var(--green);transform:translateY(-3px)}
+.other-icon{font-size:28px}
+.other-name{font-size:12.5px;font-weight:700;color:var(--ink)}
+
+@media(max-width:900px){.feat-hero-inner,.feat-2col{grid-template-columns:1fr}.feat-grid-3{grid-template-columns:1fr 1fr}.other-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.feat-grid-3{grid-template-columns:1fr}.other-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="lf-nav-placeholder"></div>
+
+<section class="feat-hero">
+  <div class="feat-hero-inner">
+    <div>
+      <span class="feat-hero-tag">CRM Clientes</span>
+      <h1 class="feat-hero-title">Conoce mejor<br>a tus clientes,<br><em>vende más.</em></h1>
+      <p class="feat-hero-desc">Historial completo de compras, seguimiento de crédito, notas personalizadas y comunicación directa. Todo en un solo perfil.</p>
+      <div class="feat-hero-btns">
+        <a class="btn btn-green" href="registro.html">Pruébalo gratis</a>
+        <a class="btn btn-ghost" href="#">Ver demo</a>
+      </div>
+    </div>
+    <div style="font-size:1px">
+      <div class="crm-mock">
+        <div class="crm-head"><span class="crm-title">Clientes — Vista general</span><span class="crm-count">587 clientes</span></div>
+        <div class="crm-client">
+          <div class="crm-av" style="background:linear-gradient(135deg,#2563eb,#7c3aed)">EM</div>
+          <div class="crm-info"><div class="crm-name">Empresa ABC S.A. de C.V.</div><div class="crm-detail">RFC: EAB920301AB1 · 48 compras</div></div>
+          <span class="crm-tag tag-vip">⭐ VIP</span>
+          <div class="crm-total"><div class="crm-total-val">$84,200</div><div class="crm-total-label">Total comprado</div></div>
+        </div>
+        <div class="crm-client">
+          <div class="crm-av" style="background:linear-gradient(135deg,#059669,#0d9488)">JP</div>
+          <div class="crm-info"><div class="crm-name">Juan Pérez García</div><div class="crm-detail">XAXX010101000 · 12 compras</div></div>
+          <span class="crm-tag tag-reg">Regular</span>
+          <div class="crm-total"><div class="crm-total-val">$14,500</div><div class="crm-total-label">Total comprado</div></div>
+        </div>
+        <div class="crm-client">
+          <div class="crm-av" style="background:linear-gradient(135deg,#d97706,#dc2626)">TS</div>
+          <div class="crm-info"><div class="crm-name">Tech Solutions MX</div><div class="crm-detail">TSM010101000 · 2 compras</div></div>
+          <span class="crm-tag tag-new">Nuevo</span>
+          <div class="crm-total"><div class="crm-total-val">$3,800</div><div class="crm-total-label">Total comprado</div></div>
+        </div>
+        <div class="crm-client">
+          <div class="crm-av" style="background:linear-gradient(135deg,#0891b2,#0e7490)">MR</div>
+          <div class="crm-info"><div class="crm-name">María Rodríguez</div><div class="crm-detail">ROXM850312F45 · 31 compras</div></div>
+          <span class="crm-tag tag-vip">⭐ VIP</span>
+          <div class="crm-total"><div class="crm-total-val">$52,100</div><div class="crm-total-label">Total comprado</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feat-section">
+  <div class="feat-inner">
+    <div class="reveal">
+      <span class="s-eyebrow">Funcionalidades</span>
+      <h2 class="s-title">Un CRM diseñado<br><em>para el comercio mexicano.</em></h2>
+    </div>
+    <div class="feat-2col">
+      <div class="feat-list reveal">
+        <div class="feat-item"><div class="feat-item-icon">👤</div><div><div class="feat-item-title">Perfil completo del cliente</div><div class="feat-item-desc">Datos fiscales, dirección, historial de compras, notas y documentos adjuntos en un solo lugar.</div></div></div>
+        <div class="feat-item"><div class="feat-item-icon">💳</div><div><div class="feat-item-title">Seguimiento de crédito</div><div class="feat-item-desc">Define límites de crédito por cliente, lleva el saldo pendiente y genera estados de cuenta automáticos.</div></div></div>
+        <div class="feat-item"><div class="feat-item-icon">📊</div><div><div class="feat-item-title">Historial de compras</div><div class="feat-item-desc">Ve todas las ventas, facturas y cotizaciones de cada cliente. Identifica patrones y oportunidades de venta.</div></div></div>
+        <div class="feat-item"><div class="feat-item-icon">📱</div><div><div class="feat-item-title">Comunicación directa</div><div class="feat-item-desc">Envía cotizaciones, facturas y mensajes por WhatsApp o correo directamente desde el perfil del cliente.</div></div></div>
+        <div class="feat-item"><div class="feat-item-icon">⭐</div><div><div class="feat-item-title">Segmentación de clientes</div><div class="feat-item-desc">Clasifica clientes por VIP, frecuente, nuevo o inactivo. Crea listas y aplica precios o descuentos especiales.</div></div></div>
+      </div>
+      <div class="aside-dark reveal reveal-d2">
+        <div class="aside-dark-title">Conoce tu cartera de clientes</div>
+        <p class="aside-dark-desc">Toda la información de tus clientes centralizada. Nunca pierdas el hilo de ninguna relación comercial.</p>
+        <div class="aside-stat-row"><span class="aside-stat-label">Clientes activos promedio</span><span class="aside-stat-val">+587</span></div>
+        <div class="aside-stat-row"><span class="aside-stat-label">Ticket promedio</span><span class="aside-stat-val">$1,535</span></div>
+        <div class="aside-stat-row"><span class="aside-stat-label">Datos por cliente</span><span class="aside-stat-val">Ilimitados</span></div>
+        <div class="aside-stat-row"><span class="aside-stat-label">Exportación</span><span class="aside-stat-val">Excel / CSV</span></div>
+        <a class="btn btn-green" href="registro.html" style="margin-top:20px;justify-content:center">Empezar gratis →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feat-section gray">
+  <div class="feat-inner">
+    <div class="reveal text-center">
+      <span class="s-eyebrow">Más funcionalidades</span>
+      <h2 class="s-title">Fideliza a tus clientes<br><em>con herramientas reales.</em></h2>
+    </div>
+    <div class="feat-grid-3">
+      <div class="feat-card gray-bg reveal reveal-d1"><div class="feat-card-icon">📝</div><div class="feat-card-title">Notas y seguimiento</div><p class="feat-card-desc">Agrega notas internas, recordatorios y tareas de seguimiento por cliente. No pierdas ningún detalle importante.</p></div>
+      <div class="feat-card gray-bg reveal reveal-d2"><div class="feat-card-icon">📨</div><div class="feat-card-title">Envío de estados de cuenta</div><p class="feat-card-desc">Genera y envía estados de cuenta con saldos pendientes automáticamente al correo del cliente.</p></div>
+      <div class="feat-card gray-bg reveal reveal-d3"><div class="feat-card-icon">🎯</div><div class="feat-card-title">Precios por cliente</div><p class="feat-card-desc">Define listas de precios especiales para clientes VIP, mayoristas o distribuidores. Aplican automáticamente en ventas.</p></div>
+      <div class="feat-card gray-bg reveal reveal-d1"><div class="feat-card-icon">📍</div><div class="feat-card-title">Múltiples direcciones</div><p class="feat-card-desc">Guarda varias direcciones de entrega por cliente. Útil para negocios con múltiples sucursales o puntos de entrega.</p></div>
+      <div class="feat-card gray-bg reveal reveal-d2"><div class="feat-card-icon">🔍</div><div class="feat-card-title">Búsqueda avanzada</div><p class="feat-card-desc">Busca clientes por nombre, RFC, teléfono o correo. Filtra por estado de cuenta, último pedido o segmento.</p></div>
+      <div class="feat-card gray-bg reveal reveal-d3"><div class="feat-card-icon">📂</div><div class="feat-card-title">Importación de contactos</div><p class="feat-card-desc">Importa tu base de clientes desde Excel, CSV o tu sistema anterior. Migración rápida y sin pérdida de datos.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="other-modules">
+  <div class="lf-section-inner">
+    <div class="reveal"><span class="s-eyebrow">Más módulos</span><h2 class="s-title">Explora toda la plataforma</h2></div>
+    <div class="other-grid reveal">
+      <a class="other-card" href="punto-de-venta.html"><div class="other-icon">🛒</div><div class="other-name">Punto de Venta</div></a>
+      <a class="other-card" href="facturacion.html"><div class="other-icon">📄</div><div class="other-name">Facturación CFDI</div></a>
+      <a class="other-card" href="inventario.html"><div class="other-icon">📦</div><div class="other-name">Inventario</div></a>
+      <a class="other-card" href="cotizaciones.html"><div class="other-icon">📋</div><div class="other-name">Cotizaciones</div></a>
+      <a class="other-card" href="reportes.html"><div class="other-icon">📊</div><div class="other-name">Reportes</div></a>
+    </div>
+  </div>
+</section>
+
+<div id="lf-footer-placeholder"></div>
+
+<script>/* ═══════════════════════════════════════════
+   LIBERTYFIN — SHARED JS
+   ═══════════════════════════════════════════ */
+
+// ── NAVBAR HTML ─────────────────────────────
+const NAV_HTML = `
+<nav class="lf-nav" id="lf-nav">
+  <a class="nav-logo" href="index.html">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 28 28" fill="none">
+        <path d="M14 2C14 2 6 8 6 15a8 8 0 0016 0c0-7-8-13-8-13z" fill="#22c55e"/>
+        <path d="M14 10v10M10 17l4 4 4-4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-logotype">Libertyfin<span>.</span></span>
+  </a>
+
+  <ul class="nav-menu">
+    <!-- Funciones -->
+    <li>
+      <a href="#" onclick="toggleDd(event,'dd-funciones')">
+        Funciones
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <div class="nav-dropdown" id="dd-funciones">
+        <div class="nav-dropdown-grid">
+          <span class="nav-dd-section-title">Ventas</span>
+          <a class="nav-dd-item" href="punto-de-venta.html"><div class="nav-dd-icon">🛒</div><div class="nav-dd-text"><div class="nav-dd-title">Punto de Venta</div><div class="nav-dd-desc">Cobra rápido desde cualquier dispositivo</div></div></a>
+          <a class="nav-dd-item" href="cotizaciones.html"><div class="nav-dd-icon">📋</div><div class="nav-dd-text"><div class="nav-dd-title">Cotizaciones</div><div class="nav-dd-desc">Genera y envía cotizaciones al instante</div></div></a>
+          <a class="nav-dd-item" href="facturacion.html"><div class="nav-dd-icon">📄</div><div class="nav-dd-text"><div class="nav-dd-title">Facturación CFDI</div><div class="nav-dd-desc">Timbra facturas al SAT en segundos</div></div></a>
+          <span class="nav-dd-section-title">Inventario & Clientes</span>
+          <a class="nav-dd-item" href="inventario.html"><div class="nav-dd-icon">📦</div><div class="nav-dd-text"><div class="nav-dd-title">Inventario</div><div class="nav-dd-desc">Stock en tiempo real, múltiples almacenes</div></div></a>
+          <a class="nav-dd-item" href="clientes.html"><div class="nav-dd-icon">👥</div><div class="nav-dd-text"><div class="nav-dd-title">CRM Clientes</div><div class="nav-dd-desc">Historial, crédito y seguimiento</div></div></a>
+          <a class="nav-dd-item" href="reportes.html"><div class="nav-dd-icon">📊</div><div class="nav-dd-text"><div class="nav-dd-title">Reportes</div><div class="nav-dd-desc">Dashboards y análisis en tiempo real</div></div></a>
+        </div>
+      </div>
+    </li>
+
+    <!-- Industrias -->
+    <li>
+      <a href="#" onclick="toggleDd(event,'dd-industrias')">
+        Industrias
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <div class="nav-dropdown" id="dd-industrias">
+        <div class="nav-dropdown-grid col2">
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">🏪</div><div class="nav-dd-text"><div class="nav-dd-title">Retail & Tiendas</div><div class="nav-dd-desc">Ropa, abarrotes, ferretería y más</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">🍽️</div><div class="nav-dd-text"><div class="nav-dd-title">Restaurantes</div><div class="nav-dd-desc">Menú, mesas, cocina y delivery</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">💊</div><div class="nav-dd-text"><div class="nav-dd-title">Farmacias</div><div class="nav-dd-desc">Lotes, caducidades y recetas</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">🏗️</div><div class="nav-dd-text"><div class="nav-dd-title">Distribuidoras</div><div class="nav-dd-desc">Rutas, pedidos y cobranza</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">💈</div><div class="nav-dd-text"><div class="nav-dd-title">Servicios</div><div class="nav-dd-desc">Salones, talleres y clínicas</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">🛍️</div><div class="nav-dd-text"><div class="nav-dd-title">E-commerce</div><div class="nav-dd-desc">Tienda en línea integrada</div></div></a>
+        </div>
+      </div>
+    </li>
+
+    <!-- Precios -->
+    <li><a href="precios.html">Precios</a></li>
+
+    <!-- Clientes -->
+    <li><a href="clientes-casos.html">Clientes</a></li>
+
+    <!-- Distribuidores -->
+    <li><a href="distribuidores.html">Distribuidores</a></li>
+
+    <!-- Recursos -->
+    <li>
+      <a href="#" onclick="toggleDd(event,'dd-recursos')">
+        Recursos
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+      <div class="nav-dropdown narrow" id="dd-recursos">
+        <div class="nav-dropdown-grid col1">
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">📖</div><div class="nav-dd-text"><div class="nav-dd-title">Blog</div><div class="nav-dd-desc">Artículos y guías</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">🎓</div><div class="nav-dd-text"><div class="nav-dd-title">Centro de ayuda</div><div class="nav-dd-desc">Tutoriales y documentación</div></div></a>
+          <a class="nav-dd-item" href="#"><div class="nav-dd-icon">📺</div><div class="nav-dd-text"><div class="nav-dd-title">Webinars</div><div class="nav-dd-desc">Capacitación en vivo</div></div></a>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="nav-ctas">
+    <a class="btn-nav-login" href="#">Iniciar sesión</a>
+    <a class="btn-nav-register" href="registro.html">
+      Registra tu empresa
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</nav>`;
+
+// ── FOOTER HTML ─────────────────────────────
+const FOOTER_HTML = `
+<footer class="lf-footer">
+  <div class="lf-footer-inner">
+    <div class="lf-footer-top">
+      <div>
+        <div class="footer-logo">
+          <div class="footer-lm">
+            <svg width="14" height="14" viewBox="0 0 28 28" fill="none"><path d="M14 2C14 2 8 7 8 13a6 6 0 0012 0c0-6-6-11-6-11z" fill="white"/></svg>
+          </div>
+          <span class="footer-lt">Libertyfin<span>.</span></span>
+        </div>
+        <p class="footer-desc">Sistema de ventas en la nube para negocios mexicanos. Sencillo, poderoso y 100% en español.</p>
+        <div class="social-links">
+          <a class="social-btn" href="#" title="Facebook" target="_blank"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a class="social-btn" href="#" title="Instagram" target="_blank"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(255,255,255,0.5)"/></svg></a>
+          <a class="social-btn" href="#" title="TikTok" target="_blank"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.13 6.33 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg></a>
+          <a class="social-btn" href="#" title="YouTube" target="_blank"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#111827" stroke="none"/></svg></a>
+          <a class="social-btn" href="#" title="LinkedIn" target="_blank"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Producto</div>
+        <ul class="footer-links">
+          <li><a href="punto-de-venta.html">Punto de venta</a></li>
+          <li><a href="facturacion.html">Facturación CFDI</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="clientes.html">CRM Clientes</a></li>
+          <li><a href="reportes.html">Reportes</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Empresa</div>
+        <ul class="footer-links">
+          <li><a href="#">Acerca de</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="distribuidores.html">Distribuidores</a></li>
+          <li><a href="#">Empleos</a></li>
+          <li><a href="#">Prensa</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Industrias</div>
+        <ul class="footer-links">
+          <li><a href="#">Retail & Tiendas</a></li>
+          <li><a href="#">Restaurantes</a></li>
+          <li><a href="#">Farmacias</a></li>
+          <li><a href="#">Distribuidoras</a></li>
+          <li><a href="#">Servicios</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Soporte</div>
+        <ul class="footer-links">
+          <li><a href="#">Centro de ayuda</a></li>
+          <li><a href="#">Documentación</a></li>
+          <li><a href="#">Estado del sistema</a></li>
+          <li><a href="#">Contacto</a></li>
+          <li><a href="#">WhatsApp soporte</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="lf-footer-bottom">
+      <span class="footer-copy">© 2026 Libertyfin. Todos los derechos reservados.</span>
+      <div class="footer-legal">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="#">Aviso legal</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp -->
+<div class="wa-float" id="waFloat">
+  <div class="wa-bubble" id="waBubble">
+    <strong>¡Hola! 👋 ¿En qué te ayudamos?</strong>
+    Chatea con nosotros en WhatsApp al instante.
+  </div>
+  <div class="wa-circle" onclick="openWhatsApp()" title="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+    <div class="wa-ping"></div>
+  </div>
+</div>`;
+
+// ── SHARED JS ───────────────────────────────
+function initShared() {
+  // Inject nav
+  const navEl = document.getElementById('lf-nav-placeholder');
+  if (navEl) navEl.outerHTML = NAV_HTML;
+
+  // Inject footer
+  const footerEl = document.getElementById('lf-footer-placeholder');
+  if (footerEl) footerEl.outerHTML = FOOTER_HTML;
+
+  // Navbar scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('lf-nav')?.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.nav-menu')) {
+      document.querySelectorAll('.nav-menu > li').forEach(li => li.classList.remove('open'));
+    }
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // WhatsApp bubble
+  setTimeout(() => document.getElementById('waBubble')?.classList.add('show'), 3000);
+  document.addEventListener('click', e => {
+    if (!document.getElementById('waFloat')?.contains(e.target))
+      document.getElementById('waBubble')?.classList.remove('show');
+  });
+}
+
+function toggleDd(e, id) {
+  e.preventDefault();
+  const li = e.currentTarget.closest('li');
+  const isOpen = li.classList.contains('open');
+  document.querySelectorAll('.nav-menu > li').forEach(l => l.classList.remove('open'));
+  if (!isOpen) li.classList.add('open');
+}
+
+function openWhatsApp() {
+  const msg = encodeURIComponent('¡Hola! Me interesa conocer más sobre Libertyfin 😊');
+  window.open('https://wa.me/521XXXXXXXXXX?text=' + msg, '_blank');
+}
+
+document.addEventListener('DOMContentLoaded', initShared);
+</script>
+</body>
+</html>
